@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fake News Detector</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <style>
+        .result { margin-top: 1rem; }
+        textarea { min-height: 180px; }
+        .badge { padding: 0.25rem 0.5rem; border-radius: 6px; color: #fff; }
+        .fake { background: #d9534f; }
+        .notfake { background: #28a745; }
+        .muted { color: #666; }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h2>Fake News Detector</h2>
+      <p class="muted">Paste a news headline or article text and get a quick prediction.</p>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <article>
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </article>
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('predict') }}">
+        <label for="news_text">News text</label>
+        <textarea id="news_text" name="news_text" placeholder="Paste news text here...">{{ input_text or '' }}</textarea>
+        <div>
+          <button type="submit" {% if not model_ready %}disabled{% endif %}>Analyze</button>
+          {% if not model_ready %}
+            <small class="muted">Model not loaded. Run training/export first.</small>
+          {% endif %}
+        </div>
+      </form>
+
+      {% if prediction_label %}
+      <section class="result">
+        <h4>Prediction</h4>
+        <p>
+          <span class="badge {{ 'fake' if prediction_label == 'Fake' else 'notfake' }}">{{ prediction_label }}</span>
+          <span class="muted">Confidence: {{ prediction_confidence }}</span>
+        </p>
+      </section>
+      {% endif %}
+
+      <footer class="muted" style="margin-top: 2rem;">
+        <small>Model: TF-IDF + Logistic Regression | Demo only, not a fact-checking tool.</small>
+      </footer>
+    </main>
+  </body>
+  </html>
+
+
+

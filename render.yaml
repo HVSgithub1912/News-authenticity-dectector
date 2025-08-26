@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: fake-news-detector
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python train_export.py --data data/news.csv --out models --model linear_svc --max_features 100000 --ngram_max 3
+    startCommand: gunicorn -w 2 -k gthread -t 120 -b 0.0.0.0:$PORT wsgi:app
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.5
+
+
