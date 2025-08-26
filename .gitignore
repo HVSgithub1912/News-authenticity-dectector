@@ -9,3 +9,14 @@ models/
 node_modules/
 
 
+# Ignore large dataset files
+data/news.csv
+data/Fake.csv
+data/True.csv
+
+# Ignore all CSVs except small demo ones
+*.csv
+!demo.csv
+!manual_testing.csv
+
+
